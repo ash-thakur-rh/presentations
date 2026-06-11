@@ -42,6 +42,12 @@
       {{ .Content }}
     </div>
   </div>
+  {{ with .Params.footer }}
+  <div class="slide-footer">
+    <span>{{ .left | safeHTML }}</span>
+    <span>{{ .right | safeHTML }}</span>
+  </div>
+  {{ end }}
 
   {{ $cdn := site.Params.reveal.cdn }}
   {{ $sri := site.Params.reveal.sri }}

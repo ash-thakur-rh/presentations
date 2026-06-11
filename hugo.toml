@@ -1,6 +1,7 @@
 baseURL = 'https://presentations.ashthakur.in/'
 locale = 'en-us'
 title = 'Presentations'
+buildFuture = true
 
 [params]
   author = 'Ashish Thakur'
@@ -23,6 +24,8 @@ title = 'Presentations'
 [taxonomies]
 
 [markup]
+  [markup.highlight]
+    codeFences = false
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
