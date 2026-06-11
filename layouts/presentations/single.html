@@ -36,7 +36,7 @@
   {{ with .Params.customCSS }}<style>{{ . | safeCSS }}</style>{{ end }}
 </head>
 <body>
-  <a class="home-link" href="{{ "/" | relURL }}">←</a>
+  <a class="home-link" href="{{ site.Home.RelPermalink }}">←</a>
   <div class="reveal">
     <div class="slides">
       {{ .Content }}
