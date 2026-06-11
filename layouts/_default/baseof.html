@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ block "title" . }}{{ site.Title }}{{ end }}</title>
+  <meta name="author" content="{{ site.Params.author }}">
+  {{ block "head" . }}{{ end }}
+</head>
+<body>
+  {{ block "main" . }}{{ end }}
+</body>
+</html>

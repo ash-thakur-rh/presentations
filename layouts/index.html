@@ -1,0 +1,44 @@
+{{ define "title" }}{{ site.Title }}{{ end }}
+
+{{ define "head" }}
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;background:#fafafa;color:#1a1a1a}
+  .container{max-width:900px;margin:0 auto;padding:2rem}
+  h1{font-size:2rem;font-weight:700;margin-bottom:.25rem}
+  .subtitle{color:#666;margin-bottom:2.5rem}
+  .presentations{display:grid;gap:1.25rem}
+  .card{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:1.5rem;text-decoration:none;color:inherit;transition:box-shadow .15s,border-color .15s}
+  .card:hover{border-color:#999;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  .card h2{font-size:1.2rem;margin:0 0 .5rem}
+  .card .meta{font-size:.85rem;color:#888}
+  .card .description{margin-top:.5rem;color:#555;font-size:.95rem}
+  .tag{display:inline-block;background:#f0f0f0;border-radius:4px;padding:2px 8px;font-size:.75rem;margin-right:.25rem;color:#555}
+</style>
+{{ end }}
+
+{{ define "main" }}
+<div class="container">
+  <h1>{{ site.Title }}</h1>
+  <p class="subtitle">{{ site.Params.description }}</p>
+  <div class="presentations">
+    {{ range where site.RegularPages "Section" "presentations" }}
+    <a class="card" href="{{ .RelPermalink }}">
+      <h2>{{ .Title }}</h2>
+      <div class="meta">
+        <span>{{ .Date.Format "2 Jan 2006" }}</span>
+        {{ with .Params.event }} · <span>{{ . }}</span>{{ end }}
+      </div>
+      {{ with .Params.description }}<p class="description">{{ . }}</p>{{ end }}
+      {{ with .Params.tags }}
+      <div style="margin-top:.75rem">
+        {{ range . }}<span class="tag">{{ . }}</span>{{ end }}
+      </div>
+      {{ end }}
+    </a>
+    {{ else }}
+    <p>No presentations yet.</p>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

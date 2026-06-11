@@ -1,0 +1,15 @@
+.reveal {
+  font-family: 'JetBrains Mono', monospace;
+}
+.reveal h1, .reveal h2, .reveal h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: none;
+  color: #00d4aa;
+}
+.reveal section {
+  text-align: left;
+}
+.reveal .subtitle {
+  color: #888;
+  font-size: 0.7em;
+}

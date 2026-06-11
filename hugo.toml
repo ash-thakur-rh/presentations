@@ -1,0 +1,33 @@
+baseURL = 'https://example.org/'
+locale = 'en-us'
+title = 'Presentations'
+
+[params]
+  author = 'Ashish Thakur'
+  description = 'Web-based presentations powered by Hugo and reveal.js'
+
+[params.reveal]
+  version = '6.0.1'
+  cdn = 'https://cdn.jsdelivr.net/npm/reveal.js@6.0.1/dist'
+
+[params.reveal.sri]
+  js = 'sha384-6x6l5j00jYdgHqxl+c9v3HQRZMOlEDoCU6EhoNp2HySUFFUAwXfT+VixFkOmtmY0'
+  css = 'sha384-8TQTOge911tNU4DISMYx3J5cwMwwLZh55NKLfAMCih8Tlt3vbomAtsr9a3Ybginy'
+  themeWhite = 'sha384-81Q01HMqtJtuIjgyqIppFp7Vbf6nLX3Q/EVIY3KH1l0XeYHD+vLGCXC1A7MRwVgB'
+  themeBlack = 'sha384-W500yBe80JJBnTj+BxYtezZLsdR5wigdRepELqePUAH1HO7npy5E8xJlk/ps8XuH'
+  pluginMarkdown = 'sha384-PMBCzyTePe7iqc+QSHsMAzcWgCop0f9fgZH8Z0Cs/ZO8bQQJkMJsVMk8FeWMGyn0'
+  pluginHighlight = 'sha384-LdZdpdi8lZatLFme3wjARFmeUjfndABE6g9hYOa0hbqpZTXmdnEUX6lQOo0rE3bx'
+  highlightMonokai = 'sha384-U5sKBQ+XWXmKMoslgLAoQ3bzxhza3KOWmao6/ItfTTv0QYVMsVSND7VaFNZUEGkB'
+  pluginNotes = 'sha384-ItZLtnETjVEapjKAvXByiEcftZ2mCwmJf1R9JYMfCMVMACTVqRMWk+JbwRLSXLSF'
+
+[taxonomies]
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[outputs]
+  home = ['html']
+  section = ['html']
+  page = ['html']
