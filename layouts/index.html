@@ -3,30 +3,62 @@
 {{ define "head" }}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800&display=swap">
 <style>
   *,*::before,*::after{box-sizing:border-box}
 
   :root{
-    --bg:#09090b;--surface:#111113;--surface-hover:#18181b;--border:#27272a;
-    --text:#fafafa;--text-secondary:#a1a1aa;--text-muted:#52525b;
-    --accent:#6d28d9;--accent-glow:rgba(109,40,217,.15);
-    --tag-bg:#1c1c1e;--tag-border:#2e2e32;--tag-text:#a1a1aa;
-    --radius:16px;
+    --bg:#06060a;
+    --surface:#111118;
+    --surface-hover:#18182a;
+    --border:#1e1e2e;
+    --text:#f0f0f5;
+    --text-secondary:#9898b0;
+    --text-muted:#55556a;
+    --accent-1:#7c3aed;
+    --accent-2:#3b82f6;
+    --accent-3:#06b6d4;
+    --gradient:linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+    --radius:20px;
+    --mesh-purple:rgba(124,58,237,.2);
+    --mesh-blue:rgba(59,130,246,.15);
+    --mesh-cyan:rgba(6,182,212,.1);
+    --grid-line:rgba(255,255,255,.03);
+    --card-shadow:rgba(0,0,0,.3);
+    --event-bg:rgba(6,182,212,.1);
+    --event-border:rgba(6,182,212,.2);
+    --tag-bg:rgba(124,58,237,.08);
+    --tag-border:rgba(124,58,237,.15);
+    --stat-bg:rgba(124,58,237,.1);
+    --stat-border:rgba(124,58,237,.25);
   }
   [data-theme="light"]{
-    --bg:#fafafa;--surface:#fff;--surface-hover:#f4f4f5;--border:#e4e4e7;
-    --text:#09090b;--text-secondary:#52525b;--text-muted:#a1a1aa;
-    --accent:#7c3aed;--accent-glow:rgba(124,58,237,.08);
-    --tag-bg:#f4f4f5;--tag-border:#e4e4e7;--tag-text:#71717a;
+    --bg:#f8f8fc;
+    --surface:#fff;
+    --surface-hover:#f0f0f8;
+    --border:#e0e0ec;
+    --text:#0f0f1a;
+    --text-secondary:#4a4a6a;
+    --text-muted:#8888a0;
+    --accent-1:#7c3aed;
+    --accent-2:#3b82f6;
+    --accent-3:#0891b2;
+    --mesh-purple:rgba(124,58,237,.08);
+    --mesh-blue:rgba(59,130,246,.06);
+    --mesh-cyan:rgba(6,182,212,.05);
+    --grid-line:rgba(0,0,0,.04);
+    --card-shadow:rgba(124,58,237,.08);
+    --event-bg:rgba(6,182,212,.08);
+    --event-border:rgba(6,182,212,.2);
+    --tag-bg:rgba(124,58,237,.06);
+    --tag-border:rgba(124,58,237,.12);
+    --stat-bg:rgba(124,58,237,.06);
+    --stat-border:rgba(124,58,237,.18);
   }
 
   body{font-family:'Inter',system-ui,sans-serif;margin:0;padding:0;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
 
-  .header{padding:5rem 2rem 1rem;max-width:720px;margin:0 auto;position:relative}
-  .header h1{font-size:3rem;font-weight:700;letter-spacing:-.04em;margin:0;line-height:1.1}
-  .header .author{color:var(--text-muted);font-size:.9rem;margin-top:.75rem;font-weight:500;letter-spacing:.02em;text-transform:uppercase}
-
+  /* --- Theme toggle --- */
   .theme-toggle{position:fixed;top:1.25rem;right:1.25rem;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,border-color .2s;color:var(--text-secondary)}
   .theme-toggle:hover{background:var(--surface-hover);border-color:var(--text-muted)}
   .theme-toggle svg{width:18px;height:18px}
@@ -34,83 +66,183 @@
   [data-theme="light"] .theme-toggle .icon-moon{display:none}
   [data-theme="light"] .theme-toggle .icon-sun{display:block}
 
-  .container{max-width:720px;margin:0 auto;padding:2rem 2rem 5rem}
-  .count{font-size:.8rem;color:var(--text-muted);margin-bottom:1.25rem;font-weight:500}
+  /* --- Hero --- */
+  .hero{position:relative;min-height:50vh;display:flex;align-items:center;justify-content:center;padding:6rem 2rem 4rem;overflow:hidden}
 
-  .presentations{display:flex;flex-direction:column;gap:.75rem}
+  .hero-mesh{position:absolute;inset:0;background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, var(--mesh-purple) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, var(--mesh-blue) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, var(--mesh-cyan) 0%, transparent 60%);
+    background-size:200% 200%;
+    animation:meshMove 20s ease-in-out infinite}
 
-  .card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1.75rem;text-decoration:none;color:inherit;transition:background .2s,border-color .2s,box-shadow .2s}
-  .card:hover{background:var(--surface-hover);border-color:var(--text-muted);box-shadow:0 0 0 1px var(--accent-glow),0 8px 24px var(--accent-glow)}
+  .hero-grid{position:absolute;inset:0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:60px 60px}
 
-  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
-  .card h2{font-size:1.05rem;font-weight:600;margin:0;color:var(--text);letter-spacing:-.01em;line-height:1.4}
-  .card .arrow{color:var(--text-muted);font-size:1rem;transition:color .2s,transform .2s;flex-shrink:0;margin-top:2px}
-  .card:hover .arrow{color:var(--accent);transform:translateX(3px)}
+  .hero-fade{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent, var(--bg))}
 
-  .card .meta{font-size:.78rem;color:var(--text-muted);margin-top:.5rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
-  .card .meta .sep{opacity:.4}
+  .hero-content{position:relative;z-index:1;text-align:center;animation:fadeIn 1s ease-out}
 
-  .card .description{margin-top:.6rem;color:var(--text-secondary);font-size:.85rem;line-height:1.6}
+  .hero-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:var(--accent-3);margin:0 0 1.25rem}
 
-  .card .tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.75rem}
-  .tag{font-size:.65rem;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--tag-bg);color:var(--tag-text);border:1px solid var(--tag-border);letter-spacing:.03em}
+  .hero-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem, 6vw, 4.5rem);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin:0;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeInUp .8s ease-out .2s both}
 
-  .empty{padding:3rem;text-align:center;color:var(--text-muted);background:var(--surface);border-radius:var(--radius);border:1px solid var(--border)}
+  .hero-author{font-size:1rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text-secondary);margin:1.25rem 0 0;animation:fadeInUp .8s ease-out .4s both}
 
+  .hero-stat{display:inline-block;font-size:.75rem;font-weight:500;padding:5px 16px;border-radius:20px;background:var(--stat-bg);border:1px solid var(--stat-border);color:var(--text-secondary);margin-top:1.5rem;animation:fadeInUp .8s ease-out .55s both}
+
+  @keyframes meshMove{
+    0%,100%{background-position:0% 0%,100% 100%,50% 50%}
+    33%{background-position:100% 0%,0% 100%,100% 0%}
+    66%{background-position:50% 100%,50% 0%,0% 50%}
+  }
+
+  /* --- Bento Grid --- */
+  .bento-container{max-width:1100px;margin:0 auto;padding:0 2rem 5rem}
+
+  .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+
+  /* --- Cards --- */
+  .bento-card{position:relative;display:flex;flex-direction:column;border-radius:var(--radius);text-decoration:none;color:inherit;overflow:hidden;transition:transform .35s ease,box-shadow .35s ease;border:1px solid var(--border);background:var(--surface)}
+
+  .bento-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px var(--card-shadow)}
+
+  .bento-card::before{content:'';position:absolute;inset:0;border-radius:var(--radius);padding:1px;background:var(--gradient);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .4s ease;pointer-events:none;z-index:2}
+
+  .bento-card:hover::before{opacity:1}
+
+  .card-glow{position:absolute;inset:-1px;border-radius:var(--radius);background:var(--gradient);opacity:0;filter:blur(24px);transition:opacity .4s ease;z-index:0}
+
+  .bento-card:hover .card-glow{opacity:.12}
+
+  .card-inner{position:relative;z-index:1;padding:1.75rem;flex:1;display:flex;flex-direction:column}
+
+  .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem}
+
+  .card-event{font-size:.7rem;font-weight:600;padding:4px 12px;border-radius:20px;background:var(--event-bg);border:1px solid var(--event-border);color:var(--accent-3);white-space:nowrap}
+
+  .card-arrow{font-size:1.1rem;color:var(--text-muted);transition:transform .3s ease,color .3s ease;flex-shrink:0}
+
+  .bento-card:hover .card-arrow{transform:translate(3px,-3px);color:var(--accent-3)}
+
+  .card-title{font-size:1.15rem;font-weight:700;letter-spacing:-.02em;line-height:1.35;margin:.75rem 0 .4rem;color:var(--text)}
+
+  .card-date{font-size:.75rem;font-weight:500;color:var(--text-muted)}
+
+  .card-description{font-size:.85rem;color:var(--text-secondary);line-height:1.65;margin-top:.75rem;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+  .card-tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:auto;padding-top:1rem}
+
+  .card-tag{font-size:.6rem;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--tag-bg);color:var(--text-secondary);border:1px solid var(--tag-border);letter-spacing:.03em}
+
+  /* Featured card (first) */
+  .bento-featured{grid-column:span 2;grid-row:span 2}
+  .bento-featured .card-inner{padding:2.25rem}
+  .bento-featured .card-title{font-size:1.6rem;line-height:1.25}
+  .bento-featured .card-description{-webkit-line-clamp:unset;font-size:.9rem}
+  .bento-featured::after{content:'';position:absolute;top:0;left:2rem;right:2rem;height:2px;background:var(--gradient);border-radius:2px;z-index:2}
+
+  /* Solo card (only 1 presentation) */
+  .bento-solo{grid-column:1/-1}
+  .bento-solo .card-inner{padding:2.5rem}
+  .bento-solo .card-title{font-size:1.6rem}
+  .bento-solo .card-description{-webkit-line-clamp:unset;font-size:.9rem}
+  .bento-solo::after{content:'';position:absolute;top:0;left:2rem;right:2rem;height:2px;background:var(--gradient);border-radius:2px;z-index:2}
+
+  /* Empty state */
+  .bento-empty{grid-column:1/-1;padding:4rem 2rem;text-align:center;color:var(--text-muted);background:var(--surface);border-radius:var(--radius);border:1px solid var(--border)}
+
+  /* Stagger animation */
+  .bento-card{animation:fadeInUp .6s ease-out calc(.6s + var(--stagger,0) * .12s) both}
+
+  /* --- Footer --- */
   .footer{text-align:center;padding:0 2rem 3rem;font-size:.75rem;color:var(--text-muted)}
   .footer a{color:var(--text-muted);text-decoration:none;border-bottom:1px solid var(--border);transition:color .2s}
   .footer a:hover{color:var(--text-secondary)}
 
+  /* --- Animations --- */
+  @keyframes fadeInUp{
+    from{opacity:0;transform:translateY(24px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  @keyframes fadeIn{
+    from{opacity:0}
+    to{opacity:1}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  }
+
+  /* --- Responsive --- */
+  @media(max-width:900px){
+    .bento-grid{grid-template-columns:repeat(2,1fr)}
+    .bento-featured{grid-column:span 2;grid-row:span 1}
+  }
+
   @media(max-width:640px){
-    .header{padding:3.5rem 1.5rem 1rem}
-    .header h1{font-size:2rem}
-    .container{padding:1.5rem 1.5rem 4rem}
-    .card{padding:1.25rem 1.25rem}
+    .hero{min-height:40vh;padding:4rem 1.5rem 3rem}
+    .bento-container{padding:0 1.5rem 3rem}
+    .bento-grid{grid-template-columns:1fr}
+    .bento-featured,.bento-solo{grid-column:span 1}
+    .bento-featured .card-inner,.bento-solo .card-inner{padding:1.5rem}
+    .bento-featured .card-title,.bento-solo .card-title{font-size:1.2rem}
   }
 </style>
 {{ end }}
 
 {{ define "main" }}
+{{ $talks := where site.RegularPages "Section" "presentations" }}
+
 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
   <svg class="icon-moon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
   <svg class="icon-sun" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
 </button>
 
-<div class="header">
-  <h1>{{ site.Title }}</h1>
-  <p class="author">{{ site.Params.author }}</p>
-</div>
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-fade"></div>
+  <div class="hero-content">
+    <p class="hero-label">Speaker Portfolio</p>
+    <h1 class="hero-title">{{ site.Title }}</h1>
+    <p class="hero-author">{{ site.Params.author }}</p>
+    <div><span class="hero-stat">{{ len $talks }} presentation{{ if ne (len $talks) 1 }}s{{ end }}</span></div>
+  </div>
+</section>
 
-<div class="container">
-  {{ $talks := where site.RegularPages "Section" "presentations" }}
-  <div class="count">{{ len $talks }} presentation{{ if ne (len $talks) 1 }}s{{ end }}</div>
-  <div class="presentations">
-    {{ range $talks }}
-    <a class="card" href="{{ .RelPermalink }}">
-      <div class="card-top">
-        <h2>{{ .Title }}</h2>
-        <span class="arrow">→</span>
+<div class="bento-container">
+  <div class="bento-grid">
+    {{ range $i, $p := $talks }}
+    <a class="bento-card {{ if le (len $talks) 1 }}bento-solo{{ else if eq $i 0 }}bento-featured{{ end }}" href="{{ $p.RelPermalink }}" style="--stagger:{{ $i }}">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          {{ with $p.Params.event }}<span class="card-event">{{ . }}</span>{{ end }}
+          <span class="card-arrow">&#8599;</span>
+        </div>
+        <h2 class="card-title">{{ $p.Title }}</h2>
+        <p class="card-date">{{ $p.Date.Format "January 2, 2006" }}</p>
+        {{ with $p.Params.description }}<p class="card-description">{{ . }}</p>{{ end }}
+        {{ with $p.Params.tags }}
+        <div class="card-tags">
+          {{ range . }}<span class="card-tag">{{ . }}</span>{{ end }}
+        </div>
+        {{ end }}
       </div>
-      <div class="meta">
-        <span>{{ .Date.Format "Jan 2006" }}</span>
-        {{ with .Params.event }}<span class="sep">/</span><span>{{ . }}</span>{{ end }}
-      </div>
-      {{ with .Params.description }}<p class="description">{{ . }}</p>{{ end }}
-      {{ with .Params.tags }}
-      <div class="tags">
-        {{ range . }}<span class="tag">{{ . }}</span>{{ end }}
-      </div>
-      {{ end }}
     </a>
     {{ else }}
-    <div class="empty">No presentations yet.</div>
+    <div class="bento-empty">No presentations yet.</div>
     {{ end }}
   </div>
 </div>
 
-<div class="footer">
+<footer class="footer">
   Powered by <a href="https://gohugo.io">Hugo</a> &amp; <a href="https://revealjs.com">reveal.js</a>
-</div>
+</footer>
 
 <script>
   function toggleTheme(){
