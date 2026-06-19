@@ -14,8 +14,8 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 **Act 1 (slides 1-6):** Set the context — who you are, the problem, what operators are, why they matter.
 **Act 2 (slides 7-11):** Introduce the Java tooling — Fabric8 as the foundation, JOSDK as the framework.
-**Act 3 (slides 12-17):** Build it — CRD, reconciler, dependent resources, best practices, error handling.
-**Act 4 (slides 18-21):** Social proof, resources, live demo, close.
+**Act 3 (slides 12-18):** Build it — CRD, CR, reconciler, dependent resources, best practices, error handling.
+**Act 4 (slides 19-22):** Social proof, resources, live demo, close.
 
 ---
 
@@ -33,9 +33,11 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ### Slide 2 — About Me
 
-> I'm a Senior Software Engineer at Red Hat. I contribute to the Fabric8 Kubernetes Client — it's the most widely used Java client for Kubernetes. 3.7k stars, 132 releases, 11 years of history. If you've used any Java tool that talks to Kubernetes — Jenkins, Apache Flink, Strimzi, Spring Cloud Kubernetes — chances are it uses Fabric8 under the hood.
+> I'm a Senior Software Engineer at Red Hat. I contribute to the Fabric8 Kubernetes Client — it's the most widely used Java client for Kubernetes with over 1 million monthly downloads, 3.7k stars, and 11 years of history.
 >
-> I'm also part of the CNCF Operator Framework ecosystem, which is how I got into building operators with Java.
+> Fabric8 is a building block for some major projects — Quarkus, Spring Cloud Kubernetes, Apache Flink — and it's also the foundation for JOSDK, the CNCF Operator Framework for Java, which is what we'll be talking about today.
+>
+> If you want to connect after the talk — my Twitter, LinkedIn, and GitHub are all on the slide. I also write about Kubernetes and Java on my blog.
 
 **Transition:** "So why do we even need operators? Let me paint a picture."
 
@@ -43,13 +45,17 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ### Slide 3 — The Problem
 
-> Day 1 with Kubernetes is great. You write your YAML, run `kubectl apply`, and your app is running. Easy.
+> Let's talk about the lifecycle of running software on Kubernetes.
 >
-> But then comes Day 2. You need to do a zero-downtime upgrade. You need to scale based on custom business metrics, not just CPU. Your database needs backup and failover. Configuration drifts happen in production.
+> Day 0 is the planning phase — architecture decisions, tooling choices, capacity planning. This happens before you write any YAML.
+>
+> Day 1 is the fun part. You write your YAML, run `kubectl apply`, and your app is running. Easy. Ship it.
+>
+> But then comes Day 2. This is where reality hits. You need zero-downtime upgrades. You need scaling, backup, restore, failover. Configuration drifts happen in production and you need to detect and recover from them.
 >
 > *(fragment appears)*
 >
-> And here's the thing — humans can't be on-call 24/7 watching every resource. We need to encode that operational knowledge into software that runs inside the cluster, watching and reacting continuously. That's exactly what operators do.
+> Humans can't be on-call 24/7 watching every resource. We need to encode that operational knowledge into software that runs inside the cluster, watching and reacting continuously. That's exactly what operators do.
 
 **Transition:** "So what exactly is a Kubernetes Operator?"
 
@@ -59,9 +65,11 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 > An operator is a software extension that manages resources on behalf of Kubernetes. The goal is simple: automate the complex Day 2 operations that humans would otherwise do manually.
 >
-> The pattern has three parts. First, the user creates a Custom Resource — that's the desired state. A controller watches for changes to that resource. And the reconciliation loop continuously works to make the current state match the desired state.
+> The pattern has three steps. First — Declare. The user specifies *what* they want by creating a Custom Resource. Then — Watch. A controller detects that desired state change. And finally — Reconcile. The controller continuously drives the current state toward the desired state.
 >
-> This is the heart of the operator pattern — it's a never-ending loop. Something breaks? The operator notices and fixes it. Someone deletes a pod? The operator recreates it. Configuration drifts? The operator corrects it.
+> *(fragment appears)*
+>
+> This is fundamentally *declarative*. The user requests what they want, and the operator figures out how to make it happen. Something breaks? The operator notices and fixes it. Configuration drifts? The operator corrects it. This loop never stops.
 
 **Transition:** "Now there's an important distinction here."
 
@@ -69,11 +77,13 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ### Slide 5 — Operator vs. Controller
 
-> A controller is a generic loop — it watches built-in Kubernetes resources like Pods and Services and reacts. You can build a controller with just the Fabric8 Client.
+> A controller follows the Observe, Compare, Act pattern — it watches built-in Kubernetes resources like Pods and Services and reacts. No CRDs needed. Think of the built-in ReplicaSet, DaemonSet, and StatefulSet controllers.
 >
-> An operator is a specialized controller. The key difference? It uses Custom Resource Definitions — CRDs — to extend the Kubernetes API. It's a controller with domain knowledge. It understands your application, your database, your deployment strategy.
+> An operator is a specialized controller. The key difference? It uses Custom Resource Definitions — CRDs — to extend the Kubernetes API. It manages a single application's full lifecycle with domain knowledge. Think Strimzi for Kafka, the Prometheus Operator.
 >
-> Every operator is a controller, but not every controller is an operator. And our journey today goes from Fabric8 as the foundation to JOSDK as the high-level operator framework.
+> Now, an important point — the Fabric8 Kubernetes Client can build *either* controllers or operators. It powers both. However, when building operators, JOSDK provides all the boilerplate and repetitive code you'd have to rewrite every time if you were using Fabric8 directly — the reconciliation loop, retries, event handling, dependent resource management.
+>
+> Every operator is a controller, but not every controller is an operator.
 
 **Transition:** "Let me show you why this matters with a concrete example."
 
@@ -83,11 +93,13 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 > Imagine you want to deploy a microservice with a PostgreSQL database.
 >
-> Without an operator, you're manually creating a Deployment, a Service, a ConfigMap, a Secret with database credentials, a PostgreSQL StatefulSet, an Ingress, maybe an HPA. That's 6+ YAML files, hundreds of lines, and it's error-prone. Forget one label selector and things break silently.
+> On the left — without an operator — you manage everything yourself. Write a Deployment YAML, a Service YAML, a ConfigMap, create a Secret with database credentials, deploy a PostgreSQL StatefulSet, configure Ingress and HPA. That's 6+ YAML files, all manual, all error-prone. Forget one label selector and things break silently.
 >
-> With an operator? You write one Custom Resource — 10 lines of YAML. The operator creates everything else. Database credentials are auto-generated. PostgreSQL is provisioned. Ingress is configured. Autoscaling is set up. One resource. The operator handles the rest.
+> On the right — with an operator — you declare your intent. One Custom Resource, about 8 lines of YAML. Image, replicas, database name, exposed flag. That's it.
 >
-> This is the power of the operator pattern. And this is the actual operator we'll be looking at today — the microservice-operator I built with JOSDK.
+> But here's the key — those Deployments, Services, ConfigMaps, Secrets, Ingress resources? They still exist. The operator auto-creates and manages all of them behind the scenes. The user just doesn't have to deal with them directly anymore.
+>
+> This is the actual operator we'll be looking at today — the microservice-operator I built with JOSDK.
 
 **Transition:** "So how do we build this in Java? Let me show you the stack."
 
@@ -97,7 +109,7 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 > Why Java? Because there are millions of Java developers in enterprises. They already have Java teams, Java CI/CD, Java expertise. Asking them to learn Go just to build an operator is a hard sell.
 >
-> Here's the stack. At the bottom is the Kubernetes API. On top of that sits the Fabric8 Kubernetes Client — that's the foundation. It gives you a beautiful fluent API for CRUD operations, watching resources, and working with CRDs.
+> Here's the stack. At the bottom is the Kubernetes API. On top of that sits the Fabric8 Kubernetes Client — the foundation. It gives you a fluent API for CRUD operations, watching resources, and working with CRDs.
 >
 > On top of Fabric8 sits the Java Operator SDK — JOSDK. It adds the reconciliation loop, event handling, dependent resource management, and all the production infrastructure you need.
 >
@@ -109,11 +121,15 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ### Slide 8 — Fabric8 Kubernetes Client
 
-> Fabric8 is the industry standard. Six key things make it stand out.
+> Fabric8 is the industry standard. Let me highlight what makes it stand out.
 >
-> First, the fluent DSL — every API call is chainable and readable. Second, first-class OpenShift support — the official Kubernetes Java client doesn't have this. Third, CRD support with code generation from schemas.
+> First — and this is a key differentiator — multiple HTTP client implementations. OkHttp, Vert.x, JDK HttpClient, Jetty. You pick what fits your stack. No other Java K8s client gives you this flexibility.
 >
-> Fourth, built-in testing with a mock server — you can test your code without a real cluster. Fifth, extensions for Knative, Tekton, Istio. And sixth, massive adoption — Apache Flink, Spark, Jenkins, Strimzi, Eclipse Che all use Fabric8.
+> Fluent DSL — every API call is chainable and readable. First-class OpenShift support — the official Kubernetes Java client doesn't have this. CRD support with code generation. Extensions for Knative, Tekton, Istio. And Watch & Informers for real-time event handling with caching.
+>
+> Now, I want to call special attention to the testing story. *(point to the highlighted card)* This is not available in the official Kubernetes Java client. Fabric8 gives you a Mock Server, CRUD mode, and a Kube API Test Server — fast, robust testing for your operators without spinning up a real cluster.
+>
+> In the AI-driven development era, where you're iterating faster than ever, rapid feedback loops from testing matter more than they ever have. You can test your operators locally, get instant feedback, and ship with confidence.
 
 **Transition:** "Let me show you what the code looks like."
 
@@ -155,23 +171,35 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 >
 > JOSDK is a CNCF project, it has 929 stars, and it works with both Quarkus and Spring Boot.
 
-**Transition:** "Let's build an operator. Step one — define your CRD."
+**Transition:** "Let's build an operator. Step one — define your Custom Resource Definition."
 
 ---
 
-### Slide 12 — Define Your Custom Resource
+### Slide 12 — Custom Resource Definition
 
-> On the left is the Java class. Three annotations — Group, Version, ShortNames. Extend CustomResource with your Spec and Status types. That's it.
+> This is your CRD as a Java class. Three annotations — Group, Version, ShortNames. Extend CustomResource with your Spec and Status types. Implement Namespaced. That's the CRD definition.
 >
-> On the right is what your users write. Simple YAML. Image, replicas, exposed flag. The operator creates everything else — Deployment, Service, ConfigMap, Ingress.
+> Below that is the Spec class — plain Java. Image, replicas, database config, exposed flag, hostname. Just fields.
 >
-> This is the contract between your users and your operator.
+> And here's the beautiful part — the Fabric8 Kubernetes Client CRD Generator takes this Java class and generates the full YAML schema automatically. You don't write CRD YAML by hand.
 
-**Transition:** "Here's what a production-ready CR looks like."
+**Transition:** "Now let's see what your users actually write."
 
 ---
 
-### Slide 13 — Full Custom Resource — Production Example
+### Slide 13 — Custom Resource — What Users Write
+
+> On the left is the simplest form — a basic Custom Resource. Image, replicas, exposed. That's enough to deploy a microservice with a Deployment, Service, and Ingress.
+>
+> On the right is the same CR with more spec — add a database and the operator provisions PostgreSQL. Add autoscaling and you get an HPA. Set a hostname and you get Ingress routing.
+>
+> Same resource type, same operator — the spec just grows as your needs grow. And the operator creates all the underlying Kubernetes resources automatically.
+
+**Transition:** "Here's what a full production-ready CR looks like."
+
+---
+
+### Slide 14 — Full Custom Resource — Production Example
 
 > This is a real CR from our microservice-operator. Notice the `database` section — when you set this, the operator automatically provisions a PostgreSQL StatefulSet with a PVC, generates random credentials into a Secret, creates a headless Service, and injects the credentials into the app Deployment.
 >
@@ -183,7 +211,7 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ---
 
-### Slide 14 — Implementing the Reconciler
+### Slide 15 — Implementing the Reconciler
 
 > This is the real reconciler from the microservice-operator. Look at the `@Workflow` annotation — it declares all the dependent resources and their dependency order. ConfigMap first, then Deployment depends on ConfigMap, Service depends on Deployment, and so on.
 >
@@ -195,7 +223,7 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ---
 
-### Slide 15 — Dependent Resources
+### Slide 16 — Dependent Resources
 
 > Each dependent resource is a class that manages one Kubernetes resource. You extend `CRUDKubernetesDependentResource` and implement one method — `desired()`.
 >
@@ -207,7 +235,7 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ---
 
-### Slide 16 — Patterns and Best Practices
+### Slide 17 — Patterns and Best Practices
 
 > Four critical patterns.
 >
@@ -223,7 +251,7 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ---
 
-### Slide 17 — Error Handling
+### Slide 18 — Error Handling
 
 > JOSDK gives you `updateErrorStatus` — when reconciliation fails, this method is called so you can write the error to the status subresource. Your users can see what went wrong by looking at the custom resource's status.
 >
@@ -235,7 +263,7 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ---
 
-### Slide 18 — Who's Using It in Production?
+### Slide 19 — Who's Using It in Production?
 
 > Absolutely. The Keycloak Operator — the official one — is built with Quarkus and JOSDK. That's a major CNCF-adjacent identity platform.
 >
@@ -249,7 +277,7 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ---
 
-### Slide 19 — Resources
+### Slide 20 — Resources
 
 > Everything is open source. The Fabric8 Client and JOSDK are both on GitHub. The JOSDK website has excellent documentation.
 >
@@ -261,7 +289,7 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ---
 
-### Slide 20 — DEMO
+### Slide 21 — DEMO
 
 **Demo flow (5-7 minutes):**
 
@@ -284,9 +312,9 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 
 ---
 
-### Slide 21 — Thanks
+### Slide 22 — Thanks
 
-> Thank you! The code is all on GitHub. I'm happy to chat about Fabric8, JOSDK, or anything Kubernetes and Java.
+> Thank you! The code is all on GitHub. You can find me on Twitter at @ashish___thakur or connect on LinkedIn. I'm happy to chat about Fabric8, JOSDK, or anything Kubernetes and Java.
 >
 > Questions?
 
@@ -298,16 +326,17 @@ WHY → WHAT → HOW → BUILD → HARDEN → PROVE → DEMO
 |---------|--------|-------------|
 | Intro & Problem | 1-6 | 8 min |
 | Java Tooling | 7-11 | 8 min |
-| Build It | 12-17 | 10 min |
-| Proof & Close | 18-19 | 3 min |
-| Demo | 20 | 5-7 min |
+| Build It | 12-18 | 10 min |
+| Proof & Close | 19-20 | 3 min |
+| Demo | 21 | 5-7 min |
 | Q&A | — | 5-10 min |
 | **Total** | | **~35-45 min** |
 
 ## Tips
 
 - **Before the talk:** Have the Kind cluster pre-created and the operator pre-built. Demo failures are the #1 confidence killer.
-- **Slide 6 is the hook:** The Real-World Example is where the audience goes "oh, that's useful." Pause and let it sink in.
-- **Slides 12-15 are dense:** Don't read the code line by line. Highlight the key annotations and the `desired()` method pattern. The audience can read the details later.
+- **Slide 6 is the hook:** The Real-World Example is where the audience goes "oh, that's useful." Emphasize that the resources still exist — the operator manages them, they don't disappear.
+- **Slide 8 — Testing:** Don't rush past the testing card. This is a unique differentiator. Pause and let the AI/feedback-loop point land.
+- **Slides 12-16 are dense:** Don't read the code line by line. Highlight the key annotations and the `desired()` method pattern. The audience can read the details later.
 - **Demo fallback:** If the live demo fails, have a pre-recorded terminal session (asciinema) ready to play.
 - **Q&A bait:** Mention "we chose JOSDK over Go's Operator SDK" early — someone will ask why during Q&A, and that's a great discussion.

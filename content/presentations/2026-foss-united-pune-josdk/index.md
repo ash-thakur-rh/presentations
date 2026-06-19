@@ -47,18 +47,20 @@ Senior Software Engineer · Red Hat
 <p><strong style="color:#e2e8f0">Senior Software Engineer</strong> at <strong style="color:#e2e8f0">Red Hat</strong></p>
 <p>Contributor to <strong style="color:#60a5fa">Fabric8 Kubernetes Client</strong> — the industry-standard Java client for Kubernetes & OpenShift</p>
 <p style="margin-top:.4em">
+<span class="stat">> 1M monthly downloads</span>
 <span class="stat">3.7k stars</span>
-<span class="stat">132 releases</span>
 <span class="stat">11 years</span>
 </p>
+<p style="margin-top:.3em;color:#94a3b8">Building block for <strong style="color:#e2e8f0">Quarkus</strong>, <strong style="color:#e2e8f0">Spring Cloud Kubernetes</strong>, <strong style="color:#e2e8f0">Apache Flink</strong>, and <strong style="color:#22d3ee">JOSDK</strong> (CNCF Operator Framework)</p>
 </div>
 <div class="card">
 <h3>Connect</h3>
 <ul>
-<li>github.com/ash-thakur-rh</li>
-<li>ashthakur.in/blog</li>
+<li><strong style="color:#e2e8f0">Twitter/X</strong>: @ashish___thakur</li>
+<li><strong style="color:#e2e8f0">LinkedIn</strong>: linkedin.com/in/ashish-thakur111</li>
+<li><strong style="color:#e2e8f0">GitHub</strong>: github.com/ash-thakur-rh</li>
+<li><strong style="color:#e2e8f0">Blog</strong>: ashthakur.in/blog</li>
 </ul>
-<p style="margin-top:.4em;font-size:.85em;color:#94a3b8">Part of the CNCF Operator Framework ecosystem</p>
 </div>
 </div>
 
@@ -69,25 +71,31 @@ Senior Software Engineer · Red Hat
 ## The Problem
 
 <div class="problem-grid">
+<div class="card" style="border-left:3px solid #94a3b8">
+<h3>Day 0 — Design & Plan</h3>
+<ul>
+<li>Architecture decisions & tooling</li>
+<li>Capacity planning & infrastructure</li>
+</ul>
+</div>
 <div class="card" style="border-left:3px solid #22c55e">
-<h3>Day 1 is Easy</h3>
+<h3>Day 1 — Deploy</h3>
 <p><code style="color:#22d3ee">kubectl apply -f deployment.yaml</code></p>
-<p>Deploy your app. It works. Ship it.</p>
+<p>Install, configure, and launch. It works.</p>
 </div>
 <div class="card" style="border-left:3px solid #ef4444">
-<h3>Day 2 is Hard</h3>
+<h3>Day 2 — Operate & Maintain</h3>
 <ul>
 <li>Upgrades & zero-downtime rollouts</li>
-<li>Scaling based on custom metrics</li>
-<li>Backup, restore, failover</li>
+<li>Scaling, backup, restore, failover</li>
 <li>Configuration drift & recovery</li>
 </ul>
 </div>
 </div>
 
 <div class="fragment" style="margin-top:.6em;text-align:center">
-<p style="font-size:.75em;color:#94a3b8">Human operators can't be on-call 24/7 →</p>
-<p style="font-size:.85em;color:#22d3ee;font-weight:600">Encode operational knowledge into software</p>
+<p style="color:#94a3b8">Human operators can't be on-call 24/7 →</p>
+<p style="color:#22d3ee;font-weight:600">Encode operational knowledge into software</p>
 </div>
 
 </section>
@@ -109,20 +117,22 @@ Senior Software Engineer · Red Hat
 
 <div class="flow" style="margin-top:.6em">
 <div class="flow-step">
-<h3>Custom Resource</h3>
-<p>"Desired State" from the user</p>
+<h3>Declare</h3>
+<p>User specifies <em>what</em> they want via a Custom Resource</p>
 </div>
 <div class="flow-arrow">→</div>
 <div class="flow-step">
-<h3>Controller</h3>
-<p>Watches for changes</p>
+<h3>Watch</h3>
+<p>Controller detects the desired state change</p>
 </div>
 <div class="flow-arrow">→</div>
 <div class="flow-step">
-<h3>Reconciliation</h3>
-<p>Current → Desired state</p>
+<h3>Reconcile</h3>
+<p>Controller drives current state → desired state</p>
 </div>
 </div>
+
+<p class="fragment" style="text-align:center;color:#94a3b8;margin-top:.4em"><strong style="color:#22d3ee">Declarative</strong> — the user requests <em>what</em>, the operator figures out <em>how</em></p>
 
 </section>
 
@@ -133,25 +143,21 @@ Senior Software Engineer · Red Hat
 <div class="cards">
 <div class="card">
 <h3>Controller</h3>
-<p>A generic control loop that watches built-in K8s resources (Pods, Services) and reacts.</p>
-<p>Uses <strong style="color:#60a5fa">Fabric8 Kubernetes Client</strong> directly.</p>
+<p><strong style="color:#e2e8f0">Observe → Compare → Act</strong> loop on built-in K8s resources. No CRDs needed.</p>
+<p><strong style="color:#60a5fa">Fabric8 K8s Client</strong> can build either — controllers or operators.</p>
+<p style="color:#60a5fa">e.g. ReplicaSet, DaemonSet, StatefulSet</p>
 </div>
 <div class="card">
 <h3>Operator</h3>
-<p>A specialized Controller that uses <strong style="color:#22d3ee">Custom Resource Definitions (CRDs)</strong> to extend the K8s API.</p>
-<p>A Controller with <em>domain knowledge</em>.</p>
+<p>Controller + <strong style="color:#22d3ee">CRDs</strong> — manages a single app's full lifecycle with domain knowledge.</p>
+<p><strong style="color:#22d3ee">JOSDK</strong> provides all the boilerplate you'd rewrite each time with Fabric8 Client directly.</p>
+<p style="color:#22d3ee">e.g. Strimzi (Kafka), Prometheus Operator</p>
 </div>
 </div>
 
-<div style="margin-top:.6em;text-align:center">
-<p style="font-size:.65em;color:#94a3b8">Every Operator is a Controller, but not every Controller is an Operator.</p>
-<p style="font-size:.6em;margin-top:.3em">
-<span style="color:#60a5fa;font-weight:600">Fabric8 Client</span>
-<span style="color:#94a3b8"> → Foundation → </span>
-<span style="color:#22d3ee;font-weight:700">JOSDK</span>
-<span style="color:#94a3b8"> → High-level Operator Framework</span>
-</p>
-</div>
+<p style="margin-top:.4em;color:#94a3b8;text-align:center">Every Operator is a Controller, but not every Controller is an Operator.</p>
+
+<p style="margin-top:.3em;color:#94a3b8;text-align:center"><strong style="color:#60a5fa">Fabric8 Client</strong> powers both — <strong style="color:#22d3ee">JOSDK</strong> adds the operator boilerplate: reconciliation loop, retries, event handling, dependent resources.</p>
 
 </section>
 
@@ -159,22 +165,22 @@ Senior Software Engineer · Red Hat
 
 ## Real-World Example
 
-<div class="cards">
-<div class="card" style="border-left:3px solid #ef4444">
-<h3>Without an Operator</h3>
+<div class="realworld-layout">
+<div class="card" style="border-left:3px solid #ef4444;flex:1">
+<h3>Without an Operator — You manage everything</h3>
 <ul>
-<li>Manually create Deployment, Service, ConfigMap</li>
-<li>Manually create Secret with DB credentials</li>
-<li>Manually deploy PostgreSQL StatefulSet</li>
-<li>Configure Ingress, HPA separately</li>
-<li><strong style="color:#ef4444">6+ YAML files, error-prone</strong></li>
+<li>Write Deployment YAML</li>
+<li>Write Service YAML</li>
+<li>Write ConfigMap YAML</li>
+<li>Create Secret with DB credentials</li>
+<li>Deploy PostgreSQL StatefulSet</li>
+<li>Configure Ingress, HPA</li>
 </ul>
+<p><strong style="color:#ef4444">6+ YAML files, manual and error-prone</strong></p>
 </div>
-<div class="card" style="border-left:3px solid #22c55e">
-<h3>With an Operator</h3>
-
-```yaml
-apiVersion: example.io/v1
+<div class="card" style="border-left:3px solid #22c55e;flex:1.2">
+<h3>With an Operator — You declare intent</h3>
+<pre style="margin:.2em 0 0;font-size:.85em;max-width:100%;overflow:hidden"><code class="language-yaml">apiVersion: example.io/v1
 kind: MicroService
 metadata:
   name: petclinic
@@ -182,10 +188,8 @@ spec:
   image: spring-petclinic:3.5.6
   replicas: 2
   database: { databaseName: petclinicdb }
-  exposed: true
-```
-
-<p><strong style="color:#22c55e">One resource. Operator handles the rest.</strong></p>
+  exposed: true</code></pre>
+<p style="margin-top:.2em"><strong style="color:#22c55e">The operator auto-creates</strong> Deployment, Service, ConfigMap, Secret, Ingress, and HPA behind the scenes.</p>
 </div>
 </div>
 
@@ -224,9 +228,13 @@ spec:
 
 ## Fabric8 Kubernetes Client
 
-<p style="font-size:.65em;color:#94a3b8;margin-bottom:.3em">The industry-standard Java client for Kubernetes & OpenShift</p>
+<p style="font-size:.7em;color:#94a3b8;margin-bottom:.3em">The industry-standard Java client for Kubernetes & OpenShift</p>
 
 <div class="feature-grid" style="grid-template-columns:repeat(3,1fr)">
+<div class="feat">
+<h3>Multiple HTTP Clients</h3>
+<p>OkHttp, Vert.x, JDK HttpClient, Jetty</p>
+</div>
 <div class="feat">
 <h3>Fluent DSL</h3>
 <p>Chainable, readable API</p>
@@ -240,17 +248,18 @@ spec:
 <p>Code gen + Maven plugin</p>
 </div>
 <div class="feat">
-<h3>Built-in Testing</h3>
-<p>Mock server, CRUD mode</p>
-</div>
-<div class="feat">
 <h3>Extensions</h3>
 <p>Knative, Tekton, Istio</p>
 </div>
 <div class="feat">
-<h3>Massive Adoption</h3>
-<p>Flink, Spark, Jenkins, Strimzi</p>
+<h3>Watch & Informers</h3>
+<p>Real-time events, SharedInformers, caching</p>
 </div>
+</div>
+
+<div class="card" style="margin-top:.3em;border-left:3px solid #22d3ee;padding:8px 14px">
+<h3 style="color:#22d3ee">Built-in Testing — Not available in official K8s client</h3>
+<p>Mock Server, CRUD mode, and <strong style="color:#e2e8f0">Kube API Test Server</strong> — fast, robust testing for your operators without a real cluster. In the AI-driven development era, rapid feedback loops matter more than ever.</p>
 </div>
 
 </section>
@@ -259,7 +268,7 @@ spec:
 
 ## Fabric8 in Action
 
-<p style="font-size:.6em;color:#94a3b8;margin-bottom:.2em">Fluent DSL for CRUD, watching, and custom resources</p>
+<p style="font-size:.7em;color:#94a3b8;margin-bottom:.2em">Fluent DSL for CRUD, watching, and custom resources</p>
 
 ```java
 // List pods by label
@@ -287,7 +296,7 @@ client.resources(MicroService.class)
 
 ## From Client to Framework
 
-<p style="font-size:.65em;color:#94a3b8;margin-bottom:.3em">Fabric8 is the client. Building a production operator needs more:</p>
+<p style="font-size:.7em;color:#94a3b8;margin-bottom:.3em">Fabric8 is the client. Building a production operator needs more:</p>
 
 <div class="gap-list">
 <div class="gap-item fragment">
@@ -331,7 +340,7 @@ client.resources(MicroService.class)
 </div>
 </div>
 
-<p style="font-size:.6em;color:#94a3b8;margin-top:.5em;text-align:center">
+<p style="color:#94a3b8;margin-top:.5em;text-align:center">
 <span class="stat">CNCF Project</span>
 <span class="stat">929 stars</span>
 <span class="stat">Quarkus + Spring Boot</span>
@@ -341,25 +350,34 @@ client.resources(MicroService.class)
 
 <section class="content-slide">
 
-## Define Your Custom Resource
+## Custom Resource Definition
+
+<p style="font-size:.7em;color:#94a3b8;margin-bottom:.2em">Define your CRD as a Java class — Fabric8 K8s Client CRD Generator generates the YAML schema automatically</p>
+
+```java
+@Group("example.io") @Version("v1") @ShortNames("ms")
+public class MicroService extends
+    CustomResource<MicroServiceSpec, MicroServiceStatus>
+    implements Namespaced { }
+
+public class MicroServiceSpec {
+    private String image;
+    private int replicas;
+    private DatabaseSpec database;
+    private boolean exposed;
+    private String hostname;
+}
+```
+
+</section>
+
+<section class="content-slide">
+
+## Custom Resource — What Users Write
 
 <div class="cards">
 <div class="card">
-<h3>Java CRD Class</h3>
-
-```java
-@Group("example.io")
-@Version("v1")
-@ShortNames("ms")
-public class MicroService extends
-  CustomResource<MicroServiceSpec,
-                 MicroServiceStatus>
-  implements Namespaced { }
-```
-
-</div>
-<div class="card">
-<h3>What Users Write</h3>
+<h3>Simple</h3>
 
 ```yaml
 apiVersion: example.io/v1
@@ -373,9 +391,25 @@ spec:
 ```
 
 </div>
+<div class="card">
+<h3>Production — same CR, more spec</h3>
+
+```yaml
+spec:
+  image: spring-petclinic:4.0.3
+  replicas: 2
+  database: { databaseName: petclinicdb }
+  autoscaling:
+    minReplicas: 2
+    maxReplicas: 8
+  exposed: true
+  hostname: petclinic.example.com
+```
+
+</div>
 </div>
 
-<p style="font-size:.6em;color:#94a3b8;margin-top:.3em;text-align:center">One simple resource — the operator creates Deployments, Services, ConfigMaps, database, HPA, Ingress automatically.</p>
+<p style="font-size:.7em;color:#94a3b8;margin-top:.3em;text-align:center">One simple resource — the operator creates Deployments, Services, ConfigMaps, database, HPA, Ingress automatically.</p>
 
 </section>
 
@@ -383,7 +417,7 @@ spec:
 
 ## Full Custom Resource — Production Example
 
-<p style="font-size:.6em;color:#94a3b8;margin-bottom:.2em">Operator-managed database, autoscaling, ingress — all from one CR</p>
+<p style="font-size:.7em;color:#94a3b8;margin-bottom:.2em">Operator-managed database, autoscaling, ingress — all from one CR</p>
 
 ```yaml
 apiVersion: example.io/v1
@@ -404,7 +438,7 @@ spec:
   hostname: petclinic.apps.mycluster.example.com
 ```
 
-<p style="font-size:.55em;color:#22d3ee;margin-top:.2em;text-align:center">Auto-generates DB credentials Secret, StatefulSet, headless Service — <strong>no manual kubectl create secret.</strong></p>
+<p style="font-size:.7em;color:#22d3ee;margin-top:.2em;text-align:center">Auto-generates DB credentials Secret, StatefulSet, headless Service — <strong>no manual kubectl create secret.</strong></p>
 
 </section>
 
@@ -412,7 +446,7 @@ spec:
 
 ## Implementing the Reconciler
 
-<p style="font-size:.6em;color:#94a3b8;margin-bottom:.2em">@Workflow declares the dependency graph — reconcile() just reads status</p>
+<p style="font-size:.7em;color:#94a3b8;margin-bottom:.2em">@Workflow declares the dependency graph — reconcile() just reads status</p>
 
 ```java
 @Workflow(dependents = {
@@ -445,7 +479,7 @@ public class MicroServiceReconciler
 
 ## Dependent Resources
 
-<p style="font-size:.6em;color:#94a3b8;margin-bottom:.2em">Define desired state — the framework diffs against reality and reconciles</p>
+<p style="font-size:.7em;color:#94a3b8;margin-bottom:.2em">Define desired state — the framework diffs against reality and reconciles</p>
 
 ```java
 public class DeploymentDependentResource
@@ -502,7 +536,7 @@ public class DeploymentDependentResource
 
 ## Error Handling
 
-<p style="font-size:.6em;color:#94a3b8;margin-bottom:.2em">Write errors to status subresource — cleanup uses owner references for automatic GC</p>
+<p style="font-size:.7em;color:#94a3b8;margin-bottom:.2em">Write errors to status subresource — cleanup uses owner references for automatic GC</p>
 
 ```java
 @Override
