@@ -919,8 +919,6 @@ class WhenDeletingAPod {
 
 - **Fabric8 Kubernetes
   Client**: [github.com/fabric8io/kubernetes-client](https://github.com/fabric8io/kubernetes-client)
-- **KubernetesMockServer (JUnit
-  5)**: [github.com/fabric8io/kubernetes-client/blob/main/doc/junit5.md](https://github.com/fabric8io/kubernetes-client/blob/main/doc/junit5.md)
 - **Blog**: [ashthakur.in/blog](https://www.ashthakur.in/blog)
 - **GitHub**: [github.com/ash-thakur-rh](https://github.com/ash-thakur-rh)
 
