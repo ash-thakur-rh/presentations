@@ -15,15 +15,28 @@ customCSS: |
   .reveal .slides { text-align: left; }
   .reveal .controls { color: #22d3ee; }
   .reveal .progress { color: #22d3ee; height: 2px; }
+  .term-header { width: 100vw; margin-left: calc(-50vw + 50%); padding-left: calc(50vw - 50%); padding-right: calc(50vw - 50%); }
+  .stmt-slide .stmt-sub { font-size: 0.9em; margin-top: 1.5em; line-height: 1.6; }
+  .content-slide .takeaway { font-size: 0.85em; margin-top: 0.8em; padding-bottom: 1em; }
+  .content-slide pre { margin-top: 0.5em; margin-bottom: 0.5em; }
+  .fail-output { margin-top: 0.5em; margin-bottom: 0.5em; }
+  .legacy-deploy { background: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 1em; margin-top: 0.8em; }
+  .legacy-header { display: flex; justify-content: space-between; margin-bottom: 0.8em; font-size: 0.9em; padding-bottom: 0.5em; border-bottom: 1px solid #333; }
+  .legacy-log { font-family: 'JetBrains Mono', monospace; font-size: 0.75em; line-height: 1.6; }
+  .log-line { margin: 0.3em 0; }
+  .log-time { color: #666; }
+  .log-level { color: #58a6ff; }
+  .log-msg { color: #ccc; }
+  .legacy-footer { margin-top: 0.8em; padding-top: 0.5em; border-top: 1px solid #333; font-size: 0.85em; color: #888; text-align: center; }
 revealOptions: |
   transition: 'none',
   controlsTutorial: false,
   center: false,
   width: 1280,
   height: 720,
-  margin: 0.02,
+  margin: 0.04,
   minScale: 0.2,
-  maxScale: 2.0,
+  maxScale: 3.0,
 ---
 
 <section class="title-slide">
@@ -314,29 +327,26 @@ revealOptions: |
 ## A failing test is a machine-readable spec
 
 ```java
-
 @Nested
-@DisplayName("when creating a pod")
-class WhenCreatingAPod {
+@DisplayName("API retry policy")
+class ApiRetryPolicyTest {
 
-  @Test
-  @DisplayName("assigns the pod to the requested namespace")
-  void assignsPodToNamespace() { ...}
+  @Test @DisplayName("retries transient errors up to 3 times")
+  void retriesTransientErrors() { ...}
 
-  @Test
-  @DisplayName("rejects creation if namespace does not exist")
-  void rejectsCreationForMissingNamespace() { ...}
+  @Test @DisplayName("does not retry on authentication failures")
+  void noRetryOnAuthFailure() { ...}
 }
 ```
 
 <div class="fail-output">
-<span class="fail">✗ BUILD FAILED</span> <span class="muted">— PodServiceTest</span><br>
-&nbsp;&nbsp;<span class="muted">when creating a pod</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="fail">✗ rejects creation if namespace does not exist</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dimmer">expected: status 404 · actual: status 201</span>
+<span class="fail">✗ BUILD FAILED</span> <span class="muted">— ApiRetryPolicyTest</span><br>
+&nbsp;&nbsp;<span class="muted">API retry policy</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="fail">✗ does not retry on authentication failures</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dimmer">expected: 1 attempt · actual: 3 attempts</span>
 </div>
 
-<div class="takeaway">the failing test reads like a sentence — top to bottom. <em>That sentence is your spec.</em> Text docs are advisory; tests are enforced on every commit.</div>
+<div class="takeaway">the failing test reads like a sentence. <em>That sentence is your spec.</em> An AI knows exactly what to implement.</div>
 
 </section>
 
@@ -475,7 +485,7 @@ The agent spawns dozens of PRs per hour — they all wait in the same line. Your
 <p><span class="c-cyan">fabric8io/kubernetes-client</span></p>
 <p><span class="c-green">★ 3.7k</span> &nbsp;·&nbsp; <span class="c-bright">&gt;1M downloads/month</span> &nbsp;·&nbsp; 11 years</p>
 <p style="margin-top:.4em">75+ Maven modules · multiple HTTP backends<br>(OkHttp · Vert.x · JDK HttpClient · Jetty)</p>
-<p style="margin-top:.4em">Powers: <span class="c-bright">Quarkus</span> · <span class="c-bright">Spring Cloud K8s</span> · <span class="c-bright">Apache Flink</span> · <span class="c-cyan">JOSDK</span></p>
+<p style="margin-top:.4em">Powers: <span class="c-bright">Quarkus</span> · <span class="c-bright">Spring Cloud K8s</span> · <span class="c-bright">Apache Flink</span></p>
 </div>
 <div class="t-box accent-red" style="flex:1">
 <h3 class="red">The CI problem</h3>
@@ -656,8 +666,39 @@ The agent spawns dozens of PRs per hour — they all wait in the same line. Your
 <section class="content-slide">
 
 <div class="term-header">
-<span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">FeedbackPyramid.java</span></span>
+<span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">TheLegacyLoop.java</span></span>
 <span class="term-act">act 03 · 16</span>
+</div>
+
+## The loop you remember from 2010 is the loop your agent is trapped in
+
+<div class="legacy-deploy">
+<div class="legacy-header">
+<span class="c-red">☠ legacy</span>
+<span>WebLogic 10.3 · app.ear · 2010</span>
+<span class="c-red">⏱ ~30 minutes</span>
+</div>
+<div class="legacy-log">
+<div class="log-line"><span class="log-time">[14:03:11]</span> <span class="log-level">&lt;Notice&gt;</span> <span class="log-msg">&lt;WebLogicServer&gt; Starting WebLogic Server…</span></div>
+<div class="log-line"><span class="log-time">[14:05:42]</span> <span class="log-level">&lt;JDBC&gt;</span> <span class="log-msg">pool 'AppPool' created, awaiting datasource…</span></div>
+<div class="log-line"><span class="log-time">[14:08:19]</span> <span class="log-level">&lt;Deployer&gt;</span> <span class="log-msg">Deploying application 'app.ear'…</span></div>
+<div class="log-line"><span class="log-time">[14:14:07]</span> <span class="log-level">&lt;EJB&gt;</span> <span class="log-msg">Initializing 312 session beans…</span></div>
+<div class="log-line"><span class="log-time">[14:21:55]</span> <span class="log-level">&lt;JNDI&gt;</span> <span class="log-msg">Re-binding 187 names into context…</span></div>
+<div class="log-line c-yellow"><span class="log-time">[14:28:34]</span> <span class="log-level">&lt;Warning&gt;</span> <span class="log-msg">Slow startup. Re-deploy after each change.</span></div>
+<div class="log-line c-green"><span class="log-time">[14:31:02]</span> <span class="log-msg">Application available at /app</span></div>
+</div>
+<div class="legacy-footer">one button-label change. one feedback cycle.</div>
+</div>
+
+<div class="takeaway fragment">an agent is only as fast as the feedback loop — <em>the loop is the bottleneck</em></div>
+
+</section>
+
+<section class="content-slide">
+
+<div class="term-header">
+<span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">FeedbackPyramid.java</span></span>
+<span class="term-act">act 03 · 17</span>
 </div>
 
 ## The feedback pyramid: many fast, few slow
@@ -700,7 +741,7 @@ The agent spawns dozens of PRs per hour — they all wait in the same line. Your
 
 <div class="term-header">
 <span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">Act04.java</span></span>
-<span class="term-act">17</span>
+<span class="term-act">18</span>
 </div>
 
 <div class="act-body">
@@ -724,7 +765,7 @@ The agent spawns dozens of PRs per hour — they all wait in the same line. Your
 
 <div class="term-header">
 <span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">Pattern1.java</span></span>
-<span class="term-act">act 04 · 18</span>
+<span class="term-act">act 04 · 19</span>
 </div>
 
 ## Pattern 1: write tests that communicate intent
@@ -768,7 +809,7 @@ class WhenDeletingAPod {
 
 <div class="term-header">
 <span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">Pattern2.java</span></span>
-<span class="term-act">act 04 · 19</span>
+<span class="term-act">act 04 · 20</span>
 </div>
 
 ## Pattern 2: build your fast feedback loop first
@@ -800,7 +841,7 @@ class WhenDeletingAPod {
 
 <div class="term-header">
 <span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">CompoundingAdvantage.java</span></span>
-<span class="term-act">act 04 · 20</span>
+<span class="term-act">act 04 · 21</span>
 </div>
 
 ## The compounding advantage
@@ -836,7 +877,7 @@ class WhenDeletingAPod {
 
 <div class="term-header">
 <span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">Takeaways.java</span></span>
-<span class="term-act">act 04 · 21</span>
+<span class="term-act">act 04 · 22</span>
 </div>
 
 ## Key takeaways
@@ -871,7 +912,7 @@ class WhenDeletingAPod {
 
 <div class="term-header">
 <span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">Resources.md</span></span>
-<span class="term-act">22</span>
+<span class="term-act">23</span>
 </div>
 
 ## Resources
@@ -880,7 +921,6 @@ class WhenDeletingAPod {
   Client**: [github.com/fabric8io/kubernetes-client](https://github.com/fabric8io/kubernetes-client)
 - **KubernetesMockServer (JUnit
   5)**: [github.com/fabric8io/kubernetes-client/blob/main/doc/junit5.md](https://github.com/fabric8io/kubernetes-client/blob/main/doc/junit5.md)
-- **Java Operator SDK (JOSDK)**: [javaoperatorsdk.io](https://javaoperatorsdk.io)
 - **Blog**: [ashthakur.in/blog](https://www.ashthakur.in/blog)
 - **GitHub**: [github.com/ash-thakur-rh](https://github.com/ash-thakur-rh)
 
@@ -892,7 +932,7 @@ class WhenDeletingAPod {
 
 <div class="term-header">
 <span><span class="term-path">~/dev/techgenie-2026</span><span class="term-sep"> · </span><span class="term-file">Thanks.java</span></span>
-<span class="term-act">23</span>
+<span class="term-act">24</span>
 </div>
 
 <div class="thanks-body">
